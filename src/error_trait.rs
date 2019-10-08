@@ -22,10 +22,6 @@ use alloc::boxed::Box;
 /// [`Debug`]: ../fmt/trait.Debug.html
 /// [`source`]: trait.Error.html#method.source
 pub trait Error: Debug + Display + TypeInfo {
-    fn description(&self) -> &str {
-        "description() is deprecated; use Display"
-    }
-
     fn cause(&self) -> Option<&Error> {
         self.source()
     }
