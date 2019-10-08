@@ -1,5 +1,6 @@
 use core::fmt::{Debug, Display};
-use core::any::TypeId;
+#[cfg(rustc_1_7_0)]
+use core::any::{TypeId, Any};
 use super::typeinfo::TypeInfo;
 
 #[cfg(feature = "alloc")]
@@ -31,51 +32,103 @@ pub trait Error: Debug + Display + TypeInfo {
     }
 }
 
-macro_rules! impl_downcast {
-    ($($ty:tt)*) => {
-        impl ($($ty)*) {
-            pub fn is<T: $($ty)*>(&self) -> bool {
-                TypeId::of::<T>() == self.type_id()
-            }
+// Gated on 1.7.0 because on 1.6.0, Any requires Sized, causing the following
+// code to not compile (`self.type_id()` fails because Error + 'static is not
+// Sized).
+#[cfg(rustc_1_7_0)]
+impl Error + 'static {
+    pub fn is<T: Error + Any>(&self) -> bool {
+        TypeId::of::<T>() == self.type_id()
+    }
 
-            pub fn downcast_ref<T: $($ty)*>(&self) -> Option<&T> {
-                if self.is::<T>() {
-                    unsafe {
-                        Some(&*(self as *const ($($ty)*) as *const T))
-                    }
-                } else {
-                    None
-                }
+    pub fn downcast_ref<T: Error + Any>(&self) -> Option<&T> {
+        if self.is::<T>() {
+            unsafe {
+                Some(&*(self as *const Error as *const T))
             }
+        } else {
+            None
+        }
+    }
 
-            pub fn downcast_mut<T: $($ty)*>(&mut self) -> Option<&mut T> {
-                if self.is::<T>() {
-                    unsafe {
-                        Some(&mut *(self as *mut ($($ty)*) as *mut T))
-                    }
-                } else {
-                    None
-                }
+    pub fn downcast_mut<T: Error + Any>(&mut self) -> Option<&mut T> {
+        if self.is::<T>() {
+            unsafe {
+                Some(&mut *(self as *mut Error as *mut T))
             }
-
-            #[cfg(feature = "alloc")]
-            pub fn downcast<T: $($ty)*>(self: Box<Self>) -> Result<Box<T>, Box<$($ty)*>> {
-                if self.is::<T>() {
-                    unsafe {
-                        let raw: *mut ($($ty)*) = Box::into_raw(self);
-                        Ok(Box::from_raw(raw as *mut T))
-                    }
-                } else {
-                    Err(self)
-                }
-            }
+        } else {
+            None
         }
     }
 }
 
-impl_downcast!(Error + 'static);
-impl_downcast!(Error + Send + 'static);
-impl_downcast!(Error + Send + Sync + 'static);
+#[cfg(rustc_1_7_0)]
+impl Error + 'static + Send {
+    pub fn is<T: Error + Any>(&self) -> bool {
+        TypeId::of::<T>() == self.type_id()
+    }
+
+    pub fn downcast_ref<T: Error + Any>(&self) -> Option<&T> {
+        if self.is::<T>() {
+            unsafe {
+                Some(&*(self as *const Error as *const T))
+            }
+        } else {
+            None
+        }
+    }
+
+    pub fn downcast_mut<T: Error + Any>(&mut self) -> Option<&mut T> {
+        if self.is::<T>() {
+            unsafe {
+                Some(&mut *(self as *mut Error as *mut T))
+            }
+        } else {
+            None
+        }
+    }
+}
+
+#[cfg(rustc_1_7_0)]
+impl Error + 'static + Send + Sync {
+    pub fn is<T: Error + Any>(&self) -> bool {
+        TypeId::of::<T>() == self.type_id()
+    }
+
+    pub fn downcast_ref<T: Error + Any>(&self) -> Option<&T> {
+        if self.is::<T>() {
+            unsafe {
+                Some(&*(self as *const Error as *const T))
+            }
+        } else {
+            None
+        }
+    }
+
+    pub fn downcast_mut<T: Error + Any>(&mut self) -> Option<&mut T> {
+        if self.is::<T>() {
+            unsafe {
+                Some(&mut *(self as *mut Error as *mut T))
+            }
+        } else {
+            None
+        }
+    }
+}
+
+#[cfg(feature = "alloc")]
+impl Error {
+    pub fn downcast<T: Error + 'static>(self: Box<Self>) -> Result<Box<T>, Box<Error>> {
+        if self.is::<T>() {
+            unsafe {
+                let raw: *mut Error = Box::into_raw(self);
+                Ok(Box::from_raw(raw as *mut T))
+            }
+        } else {
+            Err(self)
+        }
+    }
+}
 
 macro_rules! impl_error {
     ($( #[$version:meta] $ty:path,)*) => {
