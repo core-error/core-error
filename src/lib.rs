@@ -9,6 +9,7 @@
 // This avoids making this crate fail on std build in version 1.5.0 and under
 #![cfg_attr(not(feature = "std"), no_std)]
 
+#![allow(unknown_lints)]
 #![allow(bare_trait_objects)]
 
 #[cfg(feature = "std")]
