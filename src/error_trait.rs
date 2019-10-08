@@ -78,7 +78,7 @@ impl_downcast!(Error + Send + 'static);
 impl_downcast!(Error + Send + Sync + 'static);
 
 macro_rules! impl_error {
-    ($( #[$version:meta] $ty:path),*) => {
+    ($( #[$version:meta] $ty:path,)*) => {
         $(
             #[$version]
             impl Error for $ty { }
@@ -101,13 +101,19 @@ impl_error! {
     #[cfg(rustc_1_28_0)]  ::core::alloc::LayoutErr,
     #[cfg(rustc_1_34_0)]  ::core::num::TryFromIntError,
     #[cfg(rustc_1_34_0)]  ::core::array::TryFromSliceError,
-    #[cfg(rustc_1_34_0)]  ::core::char::CharTryFromError
+    #[cfg(rustc_1_34_0)]  ::core::char::CharTryFromError,
+
+    // This implementation is actually ParseError in disguise. ParseError is a
+    // type alias to Infallible. In order to avoid having the alloc feature
+    // toggling the error impl on Infallible (which would be confusing), we will
+    // just unconditionally impl it here.
+    #[cfg(rustc_1_34_0)]  ::core::convert::Infallible,
 }
 
 #[cfg(feature = "alloc")]
 impl_error! {
-    #[cfg(rustc_1_0_0)]   ::alloc::string::FromUtf16Error,
-    #[cfg(rustc_1_0_0)]   ::alloc::string::FromUtf8Error
+    #[cfg(rustc_1_36_0)] ::alloc::string::FromUtf16Error,
+    #[cfg(rustc_1_36_0)] ::alloc::string::FromUtf8Error,
 }
 
 #[cfg(feature = "alloc")]
@@ -123,4 +129,14 @@ impl<T: Error> Error for Box<T> {
     fn source(&self) -> Option<&(dyn Error + 'static)> {
         Error::source(&**self)
     }
+}
+
+#[cfg(test)]
+mod test {
+    // Ensure that ParseError implements Error
+    #[cfg(all(rustc_1_36_0, feature = "alloc"))]
+    const _ASSERT_PARSE_ERROR_IMPLS_ERROR: fn() = || {
+        fn assert_impl<T: ?Sized + super::Error>() {}
+        assert_impl::<::alloc::string::ParseError>();
+    };
 }
