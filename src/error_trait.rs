@@ -37,8 +37,6 @@ macro_rules! impl_error {
     };
 }
 
-// All errors supported by our minimum suported Rust version can be supported by
-// default.
 impl_error! {
     #[cfg(rustc_1_0_0)]   ::core::str::ParseBoolError,
     #[cfg(rustc_1_0_0)]   ::core::str::Utf8Error,
@@ -51,7 +49,29 @@ impl_error! {
     // Added in 1.27.0 in libcore. Added in 1.9.0 in libstd.
     // Rust is full of lies.
     #[cfg(rustc_1_27_0)]  ::core::char::DecodeUtf16Error,
+    #[cfg(rustc_1_28_0)]  ::core::alloc::LayoutErr,
     #[cfg(rustc_1_34_0)]  ::core::num::TryFromIntError,
     #[cfg(rustc_1_34_0)]  ::core::array::TryFromSliceError,
     #[cfg(rustc_1_34_0)]  ::core::char::CharTryFromError
+}
+
+#[cfg(feature = "alloc")]
+impl_error! {
+    #[cfg(rustc_1_0_0)]   ::alloc::string::FromUtf16Error,
+    #[cfg(rustc_1_0_0)]   ::alloc::string::FromUtf8Error,
+}
+
+#[cfg(feature = "alloc")]
+impl<T: Error> Error for Box<T> {
+    fn description(&self) -> &str {
+        Error::description(&**self)
+    }
+
+    fn cause(&self) -> Option<&dyn Error> {
+        Error::cause(&**self)
+    }
+
+    fn source(&self) -> Option<&(dyn Error + 'static)> {
+        Error::source(&**self)
+    }
 }
