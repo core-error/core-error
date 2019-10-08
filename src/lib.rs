@@ -25,6 +25,8 @@ mod error_trait;
 
 /// Implementation of the not-yet-merged TypeInfo RFC, which is required for sound downcasting in
 /// user crates.
+#[doc(hidden)]
+#[cfg(not(feature = "std"))]
 pub mod typeinfo;
 
 #[cfg(not(feature = "std"))]
