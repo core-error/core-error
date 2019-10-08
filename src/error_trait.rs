@@ -1,4 +1,9 @@
 use core::fmt::{Debug, Display};
+use core::any::TypeId;
+use super::typeinfo::TypeInfo;
+
+#[cfg(feature = "alloc")]
+use alloc::boxed::Box;
 
 /// `Error` is a trait representing the basic expectations for error values,
 /// i.e., values of type `E` in [`Result<T, E>`]. Errors must describe
@@ -16,17 +21,65 @@ use core::fmt::{Debug, Display};
 /// [`Display`]: ../fmt/trait.Display.html
 /// [`Debug`]: ../fmt/trait.Debug.html
 /// [`source`]: trait.Error.html#method.source
-pub trait Error: Debug + Display {
+pub trait Error: Debug + Display + TypeInfo {
     fn description(&self) -> &str {
         "description() is deprecated; use Display"
     }
+
     fn cause(&self) -> Option<&Error> {
         self.source()
     }
+
     fn source(&self) -> Option<&(Error + 'static)> {
         None
     }
 }
+
+macro_rules! impl_downcast {
+    ($($ty:tt)*) => {
+        impl ($($ty)*) {
+            pub fn is<T: $($ty)*>(&self) -> bool {
+                TypeId::of::<T>() == self.type_id()
+            }
+
+            pub fn downcast_ref<T: $($ty)*>(&self) -> Option<&T> {
+                if self.is::<T>() {
+                    unsafe {
+                        Some(&*(self as *const ($($ty)*) as *const T))
+                    }
+                } else {
+                    None
+                }
+            }
+
+            pub fn downcast_mut<T: $($ty)*>(&mut self) -> Option<&mut T> {
+                if self.is::<T>() {
+                    unsafe {
+                        Some(&mut *(self as *mut ($($ty)*) as *mut T))
+                    }
+                } else {
+                    None
+                }
+            }
+
+            #[cfg(feature = "alloc")]
+            pub fn downcast<T: $($ty)*>(self: Box<Self>) -> Result<Box<T>, Box<$($ty)*>> {
+                if self.is::<T>() {
+                    unsafe {
+                        let raw: *mut ($($ty)*) = Box::into_raw(self);
+                        Ok(Box::from_raw(raw as *mut T))
+                    }
+                } else {
+                    Err(self)
+                }
+            }
+        }
+    }
+}
+
+impl_downcast!(Error + 'static);
+impl_downcast!(Error + Send + 'static);
+impl_downcast!(Error + Send + Sync + 'static);
 
 macro_rules! impl_error {
     ($( #[$version:meta] $ty:path),*) => {
@@ -58,7 +111,7 @@ impl_error! {
 #[cfg(feature = "alloc")]
 impl_error! {
     #[cfg(rustc_1_0_0)]   ::alloc::string::FromUtf16Error,
-    #[cfg(rustc_1_0_0)]   ::alloc::string::FromUtf8Error,
+    #[cfg(rustc_1_0_0)]   ::alloc::string::FromUtf8Error
 }
 
 #[cfg(feature = "alloc")]
