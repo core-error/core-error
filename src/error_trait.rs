@@ -142,6 +142,36 @@ impl Error {
     }
 }
 
+#[cfg(feature = "alloc")]
+impl Error + Send {
+    /// Attempt to downcast the box to a concrete type.
+    pub fn downcast<T: Error + 'static>(self: Box<Self>) -> Result<Box<T>, Box<Error>> {
+        if self.is::<T>() {
+            unsafe {
+                let raw: *mut Error = Box::into_raw(self);
+                Ok(Box::from_raw(raw as *mut T))
+            }
+        } else {
+            Err(self)
+        }
+    }
+}
+
+#[cfg(feature = "alloc")]
+impl Error + Send + Sync {
+    /// Attempt to downcast the box to a concrete type.
+    pub fn downcast<T: Error + 'static>(self: Box<Self>) -> Result<Box<T>, Box<Error>> {
+        if self.is::<T>() {
+            unsafe {
+                let raw: *mut Error = Box::into_raw(self);
+                Ok(Box::from_raw(raw as *mut T))
+            }
+        } else {
+            Err(self)
+        }
+    }
+}
+
 macro_rules! impl_error {
     ($( #[$version:meta] $ty:path,)*) => {
         $(
