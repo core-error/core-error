@@ -13,11 +13,6 @@ pub unsafe trait TypeInfo {
     fn type_id(&self) -> TypeId where Self: Any {
         TypeId::of::<Self>()
     }
-
-    #[cfg(rust_1_38_0)]
-    fn type_name(&self) -> &'static str {
-        core::any::type_name::<Self>()
-    }
 }
 
 unsafe impl<T: ?Sized> TypeInfo for T {}
