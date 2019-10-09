@@ -3,6 +3,8 @@ use ::core::any::{TypeId, Any};
 /// Unsafe trait to get the type_id of 'static types. Implemented for all types, so it can be
 /// easily added as a supertrait.
 pub unsafe trait TypeInfo {
+    /// Gets the `TypeId` of `self`.
+
     // The bound is slightly different from the RFC in order to make it work on
     // as many rust versions as possible.
     //

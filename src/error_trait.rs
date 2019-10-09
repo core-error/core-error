@@ -33,10 +33,13 @@ pub trait Error: Debug + Display + TypeInfo {
 // Sized).
 #[cfg(rustc_1_7_0)]
 impl Error + 'static {
+    /// Returns `true` if the boxed type is the same as `T`
     pub fn is<T: Error + Any>(&self) -> bool {
         TypeId::of::<T>() == self.type_id()
     }
 
+    /// Returns some reference to the boxed value if it is of type `T`, or
+    /// `None` if it isn't.
     pub fn downcast_ref<T: Error + Any>(&self) -> Option<&T> {
         if self.is::<T>() {
             unsafe {
@@ -47,6 +50,8 @@ impl Error + 'static {
         }
     }
 
+    /// Returns some mutable reference to the boxed value if it is of type `T`,
+    /// or `None` if it isn't.
     pub fn downcast_mut<T: Error + Any>(&mut self) -> Option<&mut T> {
         if self.is::<T>() {
             unsafe {
@@ -60,10 +65,13 @@ impl Error + 'static {
 
 #[cfg(rustc_1_7_0)]
 impl Error + 'static + Send {
+    /// Returns `true` if the boxed type is the same as `T`
     pub fn is<T: Error + Any>(&self) -> bool {
         TypeId::of::<T>() == self.type_id()
     }
 
+    /// Returns some reference to the boxed value if it is of type `T`, or
+    /// `None` if it isn't.
     pub fn downcast_ref<T: Error + Any>(&self) -> Option<&T> {
         if self.is::<T>() {
             unsafe {
@@ -74,6 +82,8 @@ impl Error + 'static + Send {
         }
     }
 
+    /// Returns some mutable reference to the boxed value if it is of type `T`,
+    /// or `None` if it isn't.
     pub fn downcast_mut<T: Error + Any>(&mut self) -> Option<&mut T> {
         if self.is::<T>() {
             unsafe {
@@ -87,10 +97,13 @@ impl Error + 'static + Send {
 
 #[cfg(rustc_1_7_0)]
 impl Error + 'static + Send + Sync {
+    /// Returns `true` if the boxed type is the same as `T`
     pub fn is<T: Error + Any>(&self) -> bool {
         TypeId::of::<T>() == self.type_id()
     }
 
+    /// Returns some reference to the boxed value if it is of type `T`, or
+    /// `None` if it isn't.
     pub fn downcast_ref<T: Error + Any>(&self) -> Option<&T> {
         if self.is::<T>() {
             unsafe {
@@ -101,6 +114,8 @@ impl Error + 'static + Send + Sync {
         }
     }
 
+    /// Returns some mutable reference to the boxed value if it is of type `T`,
+    /// or `None` if it isn't.
     pub fn downcast_mut<T: Error + Any>(&mut self) -> Option<&mut T> {
         if self.is::<T>() {
             unsafe {
@@ -114,6 +129,7 @@ impl Error + 'static + Send + Sync {
 
 #[cfg(feature = "alloc")]
 impl Error {
+    /// Attempt to downcast the box to a concrete type.
     pub fn downcast<T: Error + 'static>(self: Box<Self>) -> Result<Box<T>, Box<Error>> {
         if self.is::<T>() {
             unsafe {
