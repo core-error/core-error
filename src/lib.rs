@@ -11,6 +11,7 @@
 
 #![allow(unknown_lints)]
 #![allow(bare_trait_objects)]
+#![allow(where_clauses_object_safety)]
 
 #[cfg(feature = "std")]
 extern crate std as core;

@@ -213,14 +213,6 @@ impl_error! {
 
 #[cfg(feature = "alloc")]
 impl<T: Error> Error for Box<T> {
-    fn description(&self) -> &str {
-        Error::description(&**self)
-    }
-
-    fn cause(&self) -> Option<&Error> {
-        Error::cause(&**self)
-    }
-
     fn source(&self) -> Option<&(Error + 'static)> {
         Error::source(&**self)
     }
