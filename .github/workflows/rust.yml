@@ -25,6 +25,7 @@ jobs:
         run: cargo test --no-default-features --verbose
   nostdbuild:
     name: true no-std build
+    steps:
       - uses: actions/checkout@master
       - name: Install toolchain
         uses: actions-rs/toolchain@v1
