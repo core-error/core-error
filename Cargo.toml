@@ -11,6 +11,6 @@ build = "build.rs"
 version_check = "0.9"
 
 [features]
-default = ["std"]
+default = []
 alloc = []
 std = []

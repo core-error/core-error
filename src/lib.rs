@@ -4,7 +4,7 @@
 //! This crate simply provides an Error trait, which is identical to the one in std
 //! except for not providing deprecated methods. It also contains two features:
 //!
-//! - `std` (default): simply reexport `std::error::Error`
+//! - `std`: simply reexport `std::error::Error`
 //! - `alloc`: implement Error on alloc Errors (incl. Box)
 //!
 //! Libraries using this crate should forward their equivalent features to this library.
