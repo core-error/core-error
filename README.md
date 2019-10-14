@@ -21,6 +21,13 @@ This crate is still in the early stages. Once it reaches 1.0.0, it will be ready
 for integration in the various error crates. Furthermore, once it reaches 1.0.0,
 it will follow the same stability guarantees Rust does.
 
+# Usage
+This crate simply provides an Error trait, which is identical to the one in std
+except for not providing deprecated methods. It also contains two features:
+
+- `std` (default): simply reexport `std::error::Error`
+- `alloc`: implement Error on alloc Errors (incl. Box)
+
 # Minimum Rust Version
 
 This crate works all the way down to 1.0.0. It auto-detects the Rust version in
