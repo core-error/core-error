@@ -1,7 +1,7 @@
-use core::fmt::{Debug, Display};
-#[cfg(rustc_1_7_0)]
-use core::any::{TypeId, Any};
 use super::typeinfo::TypeInfo;
+#[cfg(rustc_1_7_0)]
+use core::any::{Any, TypeId};
+use core::fmt::{Debug, Display};
 
 #[cfg(feature = "alloc")]
 use alloc::boxed::Box;
@@ -42,9 +42,7 @@ impl Error + 'static {
     /// `None` if it isn't.
     pub fn downcast_ref<T: Error + Any>(&self) -> Option<&T> {
         if self.is::<T>() {
-            unsafe {
-                Some(&*(self as *const Error as *const T))
-            }
+            unsafe { Some(&*(self as *const Error as *const T)) }
         } else {
             None
         }
@@ -54,9 +52,7 @@ impl Error + 'static {
     /// or `None` if it isn't.
     pub fn downcast_mut<T: Error + Any>(&mut self) -> Option<&mut T> {
         if self.is::<T>() {
-            unsafe {
-                Some(&mut *(self as *mut Error as *mut T))
-            }
+            unsafe { Some(&mut *(self as *mut Error as *mut T)) }
         } else {
             None
         }
@@ -74,9 +70,7 @@ impl Error + 'static + Send {
     /// `None` if it isn't.
     pub fn downcast_ref<T: Error + Any>(&self) -> Option<&T> {
         if self.is::<T>() {
-            unsafe {
-                Some(&*(self as *const Error as *const T))
-            }
+            unsafe { Some(&*(self as *const Error as *const T)) }
         } else {
             None
         }
@@ -86,9 +80,7 @@ impl Error + 'static + Send {
     /// or `None` if it isn't.
     pub fn downcast_mut<T: Error + Any>(&mut self) -> Option<&mut T> {
         if self.is::<T>() {
-            unsafe {
-                Some(&mut *(self as *mut Error as *mut T))
-            }
+            unsafe { Some(&mut *(self as *mut Error as *mut T)) }
         } else {
             None
         }
@@ -106,9 +98,7 @@ impl Error + 'static + Send + Sync {
     /// `None` if it isn't.
     pub fn downcast_ref<T: Error + Any>(&self) -> Option<&T> {
         if self.is::<T>() {
-            unsafe {
-                Some(&*(self as *const Error as *const T))
-            }
+            unsafe { Some(&*(self as *const Error as *const T)) }
         } else {
             None
         }
@@ -118,9 +108,7 @@ impl Error + 'static + Send + Sync {
     /// or `None` if it isn't.
     pub fn downcast_mut<T: Error + Any>(&mut self) -> Option<&mut T> {
         if self.is::<T>() {
-            unsafe {
-                Some(&mut *(self as *mut Error as *mut T))
-            }
+            unsafe { Some(&mut *(self as *mut Error as *mut T)) }
         } else {
             None
         }
