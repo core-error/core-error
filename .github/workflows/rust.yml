@@ -49,6 +49,8 @@ jobs:
         rust: [stable, beta, nightly, 1.0.0]
     steps:
       - uses: actions/checkout@master
+      - name: Lockfile
+        run: cargo update
       - name: Install toolchain
         uses: actions-rs/toolchain@v1
         with:
