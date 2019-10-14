@@ -68,7 +68,7 @@ jobs:
       - name: Install toolchain
         uses: actions-rs/toolchain@v1
         with:
-          toolchain: 1.36.0
+          toolchain: nightly
           target: thumbv6m-none-eabi
           override: true
       - name: Version
