@@ -1,21 +1,26 @@
-//! Traits for working with Errors without std.
+//! Traits for working with `Error` in `std`-less environments.
 //!
 //! # Usage
-//! This crate simply provides an Error trait, which is identical to the one in std
-//! except for not providing deprecated methods. It also contains two features:
 //!
-//! - `std`: simply reexport `std::error::Error`
-//! - `alloc`: implement Error on alloc Errors (incl. Box)
+//! This crate provides an [`Error`](trait.Error.html) trait which is identical to
+//! [the one in std][std-error], except for not providing deprecated methods.
+//!
+//! This library also exposes two opt-in features:
+//!
+//! - `std`: simply re-export [`std::error::Error`][std-error].
+//! - `alloc`: implement the [`Error`](trait.Error.html) trait on `alloc` errors (including boxed types).
 //!
 //! Libraries using this crate should forward their equivalent features to this library.
 //!
-//! # Minimum Rust Version
+//! # Minimum Supported Rust Version (MSRV)
 //!
 //! This crate works all the way down to 1.0.0. It auto-detects the Rust version in
 //! order to know which error structs to implement the trait on.
 //!
 //! With `no-default-features`, the crate only compiles from 1.6.0 onwards (version
 //! at which `no_std` became stable).
+//!
+//! [std-error]: https://doc.rust-lang.org/std/error/trait.Error.html
 
 // If std feature is disabled, this crate is no_std.
 // This avoids making this crate fail on std build in version 1.5.0 and under
