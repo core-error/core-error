@@ -1,5 +1,15 @@
 # Core Error
 
+Traits for working with `Error` in `std`-less environments.
+
+## Warning
+
+This is a pre-release meant to allow experimentation and integration into the
+various error handling crates. Please do not use it yet! 1.0.0 is right around
+the corner.
+
+## Rationale
+
 With the recent proliferation of error-handling crates, it has become clear that
 the situation around the lack of a `core::error::Error` is really suboptimal. In
 `snafu`, `no_std` support is being introduced through a whole new Error trait
@@ -8,8 +18,8 @@ becoming incompatible with the ecosystem.
 
 Ideally, the `Error` trait would show up in core, but due to coherence concerns
 and std-dependent features being added to `std::error::Error`, a resolution is
-unlikely to happen soon.  As such, I propose making a new crate, `core-error` -
-exposing our own version of the `Error `trait. The goal of this crate is
+unlikely to happen soon. As such, I propose making a new crate, `core-error` -
+exposing our own version of the `Error` trait. The goal of this crate is
 twofolds:
 
 - Provide a common trait for various error handling crates (Failure, Snafu,
@@ -22,13 +32,15 @@ for integration in the various error crates. Furthermore, once it reaches 1.0.0,
 it will follow the same stability guarantees Rust does.
 
 # Usage
+
 This crate simply provides an Error trait, which is identical to the one in std
 except for not providing deprecated methods. It also contains two features:
 
 - `std`: simply reexport `std::error::Error`
 - `alloc`: implement Error on alloc Errors (incl. Box)
 
-Libraries using this crate should forward their equivalent features to this library.
+Libraries using this crate should forward their equivalent features to this
+library.
 
 # Minimum Rust Version
 
