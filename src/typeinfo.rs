@@ -36,7 +36,8 @@
 //! [where_clauses_object_safety]: https://github.com/rust-lang/rust/issues/51443
 
 #[cfg(not(rustc_1_13_0))]
-use core::any::{Any, TypeId};
+use core::any::Any;
+use core::any::TypeId;
 
 /// Unsafe trait to get the type_id of 'static types. Implemented for all types, so it can be
 /// easily added as a supertrait.
