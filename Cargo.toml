@@ -3,7 +3,7 @@ name = "core-error"
 description = "std::error::Error for libcore"
 readme = "README.md"
 license = "MIT OR Apache-2.0"
-version = "0.0.1-rc2"
+version = "0.0.1-rc3"
 authors = ["roblabla <unfiltered@roblab.la>"]
 build = "build.rs"
 
