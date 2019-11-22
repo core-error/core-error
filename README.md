@@ -47,5 +47,5 @@ library.
 This crate works all the way down to 1.0.0. It auto-detects the Rust version in
 order to know which error structs to implement the trait on.
 
-With `no-default-features`, the crate only compiles from 1.6.0 onwards (version
-at which `no_std` became stable).
+With `no-default-features`, the crate only compiles from 1.13.0 onwards (See #11
+for the reason why this release is the minimum suported version).

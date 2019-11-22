@@ -22,16 +22,19 @@
 //!
 //! # Minimum Supported Rust Version (MSRV)
 //!
-//! This crate works all the way down to 1.0.0. It auto-detects the Rust version
-//! in order to know which error structs to implement the trait on.
+//! With the default features, this crate works all the way down to 1.0.0. It
+//! simply reexport libstd's `std::error` module.
 //!
-//! With `no-default-features`, the crate only compiles from 1.6.0 onwards
-//! (version at which `no_std` became stable).
+//! With `no-default-features`, the crate only compiles from 1.13.0 onwards
+//! (see [#11] for more information on this limitation). It auto-detects the
+//! Rust version in order to know which error structs to implement the trait on.
 //!
 //! [std-error]: https://doc.rust-lang.org/std/error/trait.Error.html
+//! [#11]: https://github.com/core-error/core-error/issues/11
 
 // If std feature is disabled, this crate is no_std.
-// On 1.5.0 and under, no_std is unstable, so we can't just unconditionally use it.
+// On 1.5.0 and under, no_std is unstable, so we can't just unconditionally use
+// it.
 #![cfg_attr(not(feature = "std"), no_std)]
 #![allow(unknown_lints)]
 #![allow(bare_trait_objects)]
