@@ -30,6 +30,9 @@ pub trait Error: Debug + Display + TypeInfo {
 // Gated on 1.7.0 because on 1.6.0, Any requires Sized, causing the following
 // code to not compile (`self.type_id()` fails because Error + 'static is not
 // Sized).
+//
+// This is equivalent to `impl dyn Error + 'static`, but works on very old rust
+// compilers where dyn Trait were not implemented.
 impl Error + 'static {
     /// Returns `true` if the boxed type is the same as `T`
     pub fn is<T: Error + Any>(&self) -> bool {
