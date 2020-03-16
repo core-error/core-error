@@ -1,6 +1,6 @@
 name: Rust
 
-on: [push]
+on: [push, pull_request]
 
 jobs:
   coretest:
@@ -85,25 +85,13 @@ jobs:
 
     steps:
       - uses: actions/checkout@master
-      - id: rustfmt
-        uses: actions-rs/components-nightly@v1
-        with:
-          component: rustfmt
       - uses: actions-rs/toolchain@v1
         with:
-            toolchain: ${{ steps.rustfmt.outputs.toolchain }}
-            override: true
-      - run: rustup component add rustfmt
+          override: true
+          profile: minimal
+          toolchain: nightly
+          components: "rustfmt, clippy"
       - name: Formatting
         run: cargo fmt --all -- --check
-      - id: clippy
-        uses: actions-rs/components-nightly@v1
-        with:
-          component: clippy
-      - uses: actions-rs/toolchain@v1
-        with:
-            toolchain: ${{ steps.clippy.outputs.toolchain }}
-            override: true
-      - run: rustup component add clippy
       - name: Idioms
         run: cargo clippy --all -- -D clippy::all
